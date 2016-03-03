@@ -1,4 +1,5 @@
 ﻿module MediaGet {    
+    "use strict";
     /**
      * 剖析結果的相關資訊
      */
@@ -16,12 +17,12 @@
         /**
          * 媒體來源網址
          */
-        public sourceUrl: URL;
+        public sourceUrl: string;
 
         /**
          * 媒體真實位址
          */
-        public realUrl: URL;
+        public realUrl: string;
 
         /**
          * 媒體長度(秒)
@@ -41,7 +42,7 @@
         /**
          * 剖析結果來源類型
          */
-        public extractorConstructor: Function;
+        public extractorType: Function;
 
         /**
          * 媒體其他相關屬性
@@ -61,6 +62,6 @@
                 }
             }
             return result;
-        };
+        }
     }
 }

@@ -18,6 +18,9 @@ var MediaGet;
             return MediaGet.matchRegex[this.constructor].test(url);
         }
         ;
+        safeEval(script) {
+            return eval("(function(){" + script + "})()");
+        }
         //#region Extractor Factory
         downloadStringAsync(method, url, data) {
             return __awaiter(this, void 0, Promise, function* () {

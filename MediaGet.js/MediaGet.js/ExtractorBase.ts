@@ -1,13 +1,19 @@
 ﻿module MediaGet {
-    export enum MethodTypes{ GET,POST }
+    "use strict";
+    export enum MethodTypes{ GET, POST }
+
     export abstract class ExtractorBase implements IExtractor {
-        public abstract async getMediaInfosAsync(url: string | URL): Promise<MediaInfo[]>;
-        public isMatch(url: string | URL): boolean {
+        public abstract async getMediaInfosAsync(url: string): Promise<MediaInfo[]>;
+        public isMatch(url: string): boolean {
             return matchRegex[<any>this.constructor].test(url);
         };
 
+        protected safeEval<T>(script: string): T {
+            return eval("(function(){" + script + "})()");
+        }
+
         //#region Extractor Factory
-        protected async downloadStringAsync(method: MethodTypes, url: string | URL, data: any): Promise<string> {
+        protected async downloadStringAsync(method: MethodTypes, url: string, data?: any): Promise<string> {
             return new Promise<string>((resolve, reject) => {
                 var xhr = new XMLHttpRequest();
                 xhr.onreadystatechange = function () {
@@ -23,7 +29,7 @@
             });
         }
         
-        protected async downloadJSONAsync(method: MethodTypes, url: string | URL, data: any): Promise<JSON> {
+        protected async downloadJSONAsync(method: MethodTypes, url: string, data?: any): Promise<JSON> {
             return JSON.parse(await this.downloadStringAsync(method, url, data));
         }
 
@@ -35,7 +41,7 @@
             return new DOMParser().parseFromString(XMLString, "text/xml");
         }
 
-        protected async downloadHtmlDocumentAsync(method: MethodTypes, url: string | URL, data: any): Promise<HTMLDocument> {
+        protected async downloadHtmlDocumentAsync(method: MethodTypes, url: string, data?: any): Promise<HTMLDocument> {
             return this.ParseHTML(await this.downloadStringAsync(method, url, data));
         }
         //#endregion

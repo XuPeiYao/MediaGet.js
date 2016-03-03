@@ -8,8 +8,145 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 var MediaGet;
 (function (MediaGet) {
+    "use strict";
+    class Exception {
+    }
+    MediaGet.Exception = Exception;
+    class NotSupportException extends Exception {
+        constructor() {
+            super();
+            this.name = "不支援項目";
+        }
+    }
+    MediaGet.NotSupportException = NotSupportException;
+    class ArgumentsException extends Exception {
+        constructor() {
+            super();
+            this.name = "不正確的參數";
+        }
+    }
+    MediaGet.ArgumentsException = ArgumentsException;
+    class UrlFormatException extends ArgumentsException {
+        constructor() {
+            super();
+            this.name = "不正確的參數";
+            this.message = "不支援的目標連結";
+        }
+    }
+    MediaGet.UrlFormatException = UrlFormatException;
+})(MediaGet || (MediaGet = {}));
+NodeList.prototype.toArray = function () {
+    var result = new Array();
+    for (var i = 0; i < this.length; i++)
+        result.push(this[i]);
+    return result;
+};
+String.prototype.innerString = function (start, end) {
+    if (this.indexOf(start) < 0)
+        return null;
+    var result = this;
+    result = result.substring(result.indexOf(start) + start.length);
+    return result.substring(0, result.indexOf(end));
+};
+String.prototype.splitCount = function (sig, count) {
+    var result = new Array();
+    var temp = this.split(sig);
+    for (var i = 0; i < count - 1; i++) {
+        result.push(temp.shift());
+    }
+    result.push(temp.join(sig));
+    return result;
+};
+var MediaGet;
+(function (MediaGet) {
+    "use strict";
+    class UrlQueryStringBuilder {
+        constructor() {
+            this.query = {};
+        }
+        toString() {
+            var result = [];
+            for (var key in this.query) {
+                result.push(key + "=" + encodeURIComponent(this.query[key]));
+            }
+            return this.path + "?" + result.join('&');
+        }
+        static parse(url) {
+            var result = new UrlQueryStringBuilder();
+            var temp = url.splitCount('?', 2);
+            result.path = temp[0];
+            temp[1].split('&').forEach(item => {
+                var keyValue = item.splitCount('=', 2);
+                result.query[keyValue[0]] = decodeURIComponent(keyValue[1]);
+            });
+            return result;
+        }
+    }
+    MediaGet.UrlQueryStringBuilder = UrlQueryStringBuilder;
+})(MediaGet || (MediaGet = {}));
+var MediaGet;
+(function (MediaGet) {
+    "use strict";
+    (function (MethodTypes) {
+        MethodTypes[MethodTypes["GET"] = 0] = "GET";
+        MethodTypes[MethodTypes["POST"] = 1] = "POST";
+    })(MediaGet.MethodTypes || (MediaGet.MethodTypes = {}));
+    var MethodTypes = MediaGet.MethodTypes;
+    class ExtractorBase {
+        isMatch(url) {
+            return MediaGet.matchRegex[this.constructor].test(url);
+        }
+        ;
+        safeEval(script) {
+            return eval("(function(){" + script + "})()");
+        }
+        //#region Extractor Factory
+        downloadStringAsync(method, url, data) {
+            return __awaiter(this, void 0, Promise, function* () {
+                return new Promise((resolve, reject) => {
+                    var xhr = new XMLHttpRequest();
+                    xhr.onreadystatechange = function () {
+                        if (xhr.readyState !== 4)
+                            return;
+                        if (xhr.status >= 200 && xhr.status < 300) {
+                            resolve(xhr.responseText);
+                        }
+                        else {
+                            reject(xhr.statusText);
+                        }
+                    };
+                    xhr.open(MethodTypes[method], url, true);
+                    xhr.send();
+                });
+            });
+        }
+        downloadJSONAsync(method, url, data) {
+            return __awaiter(this, void 0, Promise, function* () {
+                return JSON.parse(yield this.downloadStringAsync(method, url, data));
+            });
+        }
+        ParseHTML(HTMLString) {
+            return new DOMParser().parseFromString(HTMLString, "text/html");
+        }
+        ParseXML(XMLString) {
+            return new DOMParser().parseFromString(XMLString, "text/xml");
+        }
+        downloadHtmlDocumentAsync(method, url, data) {
+            return __awaiter(this, void 0, Promise, function* () {
+                return this.ParseHTML(yield this.downloadStringAsync(method, url, data));
+            });
+        }
+    }
+    MediaGet.ExtractorBase = ExtractorBase;
+})(MediaGet || (MediaGet = {}));
+var MediaGet;
+(function (MediaGet) {
     var Extractors;
     (function (Extractors) {
+        "use strict";
+        /*
+         * 針對Youtube的剖析器
+         */
         class YoutubeExtractor extends MediaGet.ExtractorBase {
             getMediaInfosAsync(url) {
                 return __awaiter(this, void 0, Promise, function* () {
@@ -28,7 +165,7 @@ var MediaGet;
                         var resultItem = new MediaGet.MediaInfo();
                         //#region 通用屬性
                         resultItem.sourceUrl = url;
-                        resultItem.extractorConstructor = YoutubeExtractor;
+                        resultItem.extractorType = YoutubeExtractor;
                         resultItem.name = mediaJSON['args']['title'];
                         resultItem.duration = mediaJSON['args']['length_seconds'];
                         resultItem.description = description;
@@ -67,17 +204,19 @@ var MediaGet;
             getDecodingFunction(url) {
                 return __awaiter(this, void 0, Promise, function* () {
                     var playerScript = yield this.downloadStringAsync(MediaGet.MethodTypes.GET, url);
-                    var functionName = playerScript.innerString("\"signature\"", "(");
+                    var functionName = playerScript.innerString('"signature",', "(");
+                    console.log("FunctionName " + functionName);
                     if (functionName == null || functionName.length == 0)
                         return (value, inUrl) => value;
-                    var functionBody = "function" + playerScript.innerString("var " + functionName + "=function", "}") + ";}";
+                    var functionBody = `function${playerScript.innerString(`,${functionName}=function`, '}')};}`;
+                    console.log("FunctionBody " + functionBody);
                     var functionRefName = functionBody.innerString(";\n", ".");
                     var functionRef = playerScript.innerString("var " + functionRefName + "=", ";var");
                     var args = functionBody.innerString("(", ")");
                     functionBody = functionBody.substring(functionBody.indexOf("{") + 1);
                     functionBody = "function(" + args + "){var " + functionRefName + "=" + functionRef + ";" + functionBody;
                     return (value, inUrl) => {
-                        var scriptResult = this.safeEval("return (" + functionBody + ")(" + value + ");");
+                        var scriptResult = this.safeEval("return (" + functionBody + ")('" + value + "');");
                         var result = value;
                         if (inUrl) {
                             if (value.length != 81 && scriptResult.length == 81)
@@ -100,7 +239,7 @@ var MediaGet;
             }
             getStreamMap(mediaJSON) {
                 function getStreamMapByKey(_mediaJSON_, key) {
-                    var result = mediaJSON[key].split(',')
+                    var result = _mediaJSON_['args'][key].split(',')
                         .map(item => item.split('&'))
                         .map(item => {
                         var temp = {};
@@ -114,13 +253,14 @@ var MediaGet;
                         var hasCodecs = item['type'].indexOf(';');
                         var typeJSON = {};
                         typeJSON['mime'] = item['type'].substring(0, hasCodecs == -1 ? item['type'].length : hasCodecs);
+                        console.log(typeJSON);
                         if (hasCodecs > -1) {
                             var temp = item['type'].innerString('"', '"');
                             if (temp)
                                 temp.replace(/\+/g, "");
                             typeJSON['codecs'] = temp;
-                            item['type'] = typeJSON;
                         }
+                        item['type'] = typeJSON;
                     });
                     return result;
                 }
@@ -136,4 +276,51 @@ var MediaGet;
         Extractors.YoutubeExtractor = YoutubeExtractor;
     })(Extractors = MediaGet.Extractors || (MediaGet.Extractors = {}));
 })(MediaGet || (MediaGet = {}));
-//# sourceMappingURL=YoutubeExtractor.js.map
+var MediaGet;
+(function (MediaGet) {
+    "use strict";
+    /**
+     * 剖析結果的相關資訊
+     */
+    class MediaInfo {
+        constructor() {
+            /**
+             * 媒體其他相關屬性
+             */
+            this.attributes = {};
+        }
+        /*
+         * 取得深層副本
+         */
+        clone() {
+            var result = new MediaInfo();
+            for (var key in result) {
+                if (key == "attributes") {
+                    for (var key2 in this[key])
+                        result.attributes[key2] = this.attributes[key2];
+                }
+                else {
+                    result[key] = this[key];
+                }
+            }
+            return result;
+        }
+    }
+    MediaGet.MediaInfo = MediaInfo;
+})(MediaGet || (MediaGet = {}));
+var MediaGet;
+(function (MediaGet) {
+    (function (MediaTypes) {
+        MediaTypes[MediaTypes["Video"] = 0] = "Video";
+        MediaTypes[MediaTypes["Audio"] = 1] = "Audio";
+    })(MediaGet.MediaTypes || (MediaGet.MediaTypes = {}));
+    var MediaTypes = MediaGet.MediaTypes;
+})(MediaGet || (MediaGet = {}));
+var Extractors = MediaGet.Extractors;
+var MediaGet;
+(function (MediaGet) {
+    MediaGet.matchRegex = {
+        [MediaGet.Extractors.YoutubeExtractor]: /http(s)?:\/\/www.youtube.com\/watch\?v=.+/
+    };
+})(MediaGet || (MediaGet = {}));
+//# sourceMappingURL=MediaGet.js.map

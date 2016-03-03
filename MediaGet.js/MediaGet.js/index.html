@@ -4,12 +4,14 @@
 <head>
     <meta charset="utf-8" />
     <title>TypeScript HTML App</title>
-    <link rel="stylesheet" href="app.css" type="text/css" />
-    <script src="app.js"></script>
+    <script src="MediaGet.js"></script>
 </head>
 <body>
     <h1>TypeScript HTML App</h1>
+    <script>
+        var k = new YoutubeExtractor();
+        var c = k.getMediaInfosAsync('https://www.youtube.com/watch?v=EZkW_75NK0c&index=3&list=RDOu92wShJaAU');
+    </script>
 
-    <div id="content"></div>
 </body>
 </html>

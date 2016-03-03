@@ -1,0 +1,6 @@
+D:\MediaGet.js\MediaGet.js\MediaGet.js\bin\MediaGet.js.dll.config
+D:\MediaGet.js\MediaGet.js\MediaGet.js\bin\MediaGet.js.dll
+D:\MediaGet.js\MediaGet.js\MediaGet.js\bin\MediaGet.js.pdb
+D:\MediaGet.js\MediaGet.js\MediaGet.js\obj\Debug\MediaGet.js.csprojResolveAssemblyReference.cache
+D:\MediaGet.js\MediaGet.js\MediaGet.js\obj\Debug\MediaGet.js.dll
+D:\MediaGet.js\MediaGet.js\MediaGet.js\obj\Debug\MediaGet.js.pdb
