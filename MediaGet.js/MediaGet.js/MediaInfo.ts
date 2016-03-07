@@ -47,7 +47,7 @@
         /**
          * 媒體其他相關屬性
          */
-        public attributes: Object = {};
+        public attributes: any = {};
 
         /*
          * 取得深層副本
