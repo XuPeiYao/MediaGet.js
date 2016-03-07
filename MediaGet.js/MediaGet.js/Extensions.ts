@@ -1,6 +1,10 @@
 ﻿interface NodeList {
     toArray():Array<Node>;
 }
+interface Array<T> {
+    first(): T;
+    last(): T;
+}
 interface String {
     innerString(start: string, end: string): string;
     splitCount(sig: string, count: number): string[];
@@ -10,11 +14,19 @@ NodeList.prototype.toArray = function (): Array<Node> {
     for (var i = 0; i < this.length; i++)result.push(this[i]);
     return result;
 }
-String.prototype.innerString = function (start:string,end :string): string {
-    if (this.indexOf(start) < 0) return null;
-    var result = this;
-    result = result.substring(result.indexOf(start) + start.length);
-    return result.substring(0, result.indexOf(end));
+Array.prototype.first = function () {
+    return this[0];
+}
+Array.prototype.last = function () {
+    return this[this.length - 1];
+}
+String.prototype.innerString = function (start: string, end: string): string {
+    var index = this.indexOf(start);
+    if (index < 0) return null;
+    var result: string = this.substring(index + start.length);
+    index = result.indexOf(end);
+    if (index < 0) return null;
+    return result.substring(0, index - 1);
 }
 String.prototype.splitCount = function (sig: string, count: number): string[]{
     var result = new Array<string>();
