@@ -26,7 +26,7 @@ String.prototype.innerString = function (start: string, end: string): string {
     var result: string = this.substring(index + start.length);
     index = result.indexOf(end);
     if (index < 0) return null;
-    return result.substring(0, index - 1);
+    return result.substring(0, index);
 }
 String.prototype.splitCount = function (sig: string, count: number): string[]{
     var result = new Array<string>();

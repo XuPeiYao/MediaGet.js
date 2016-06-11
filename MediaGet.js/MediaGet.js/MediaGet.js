@@ -55,7 +55,7 @@ String.prototype.innerString = function (start, end) {
     index = result.indexOf(end);
     if (index < 0)
         return null;
-    return result.substring(0, index - 1);
+    return result.substring(0, index);
 };
 String.prototype.splitCount = function (sig, count) {
     var result = new Array();
