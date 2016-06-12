@@ -109,6 +109,7 @@
 
         private getStreamMap(mediaJSON: JSON): any[] {
             function getStreamMapByKey(_mediaJSON_: JSON, key: string): any[] {
+                if (!_mediaJSON_['args'][key]) return null;
                 var result = (<string>_mediaJSON_['args'][key]).split(',')
                     .map(item => item.split('&'))
                     .map(item => {
@@ -134,7 +135,7 @@
                 return result;
             }
             return getStreamMapByKey(mediaJSON, 'url_encoded_fmt_stream_map').concat(
-                getStreamMapByKey(mediaJSON, 'adaptive_fmts')
+                getStreamMapByKey(mediaJSON, 'adaptive_fmts') || []
             );
         }
 
