@@ -1,0 +1,2 @@
+C:\Users\XuPeiYao\Documents\GitHub\MediaGet.js\MediaGet.js\MediaGetForNodejs\obj\Debug\MediaGetForNodejs.njsprojResolveAssemblyReference.cache
+C:\Users\XuPeiYao\Documents\GitHub\MediaGet.js\MediaGet.js\MediaGetForNodejs\bin\Microsoft.NodejsTools.WebRole.dll

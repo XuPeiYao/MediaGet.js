@@ -4,3 +4,9 @@ D:\MediaGet.js\MediaGet.js\MediaGet.js\bin\MediaGet.js.pdb
 D:\MediaGet.js\MediaGet.js\MediaGet.js\obj\Debug\MediaGet.js.csprojResolveAssemblyReference.cache
 D:\MediaGet.js\MediaGet.js\MediaGet.js\obj\Debug\MediaGet.js.dll
 D:\MediaGet.js\MediaGet.js\MediaGet.js\obj\Debug\MediaGet.js.pdb
+C:\Users\XuPeiYao\Documents\GitHub\MediaGet.js\MediaGet.js\MediaGet.js\bin\MediaGet.js.dll.config
+C:\Users\XuPeiYao\Documents\GitHub\MediaGet.js\MediaGet.js\MediaGet.js\bin\MediaGet.js.dll
+C:\Users\XuPeiYao\Documents\GitHub\MediaGet.js\MediaGet.js\MediaGet.js\bin\MediaGet.js.pdb
+C:\Users\XuPeiYao\Documents\GitHub\MediaGet.js\MediaGet.js\MediaGet.js\obj\Debug\MediaGet.js.csprojResolveAssemblyReference.cache
+C:\Users\XuPeiYao\Documents\GitHub\MediaGet.js\MediaGet.js\MediaGet.js\obj\Debug\MediaGet.js.dll
+C:\Users\XuPeiYao\Documents\GitHub\MediaGet.js\MediaGet.js\MediaGet.js\obj\Debug\MediaGet.js.pdb
