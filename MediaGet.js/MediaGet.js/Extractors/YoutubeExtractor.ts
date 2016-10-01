@@ -3,7 +3,7 @@
     /*
      * 針對Youtube的剖析器
      */
-    export class YoutubeExtractor extends ExtractorBase{
+    export class YoutubeExtractor extends ExtractorBase {
         public async getMediaInfosAsync(url: string): Promise<MediaInfo[]> {
             if (!this.isMatch(url)) throw new UrlFormatException();
             var youtubePage = await this.downloadHtmlDocumentAsync(MethodTypes.GET, url, null);
@@ -20,7 +20,7 @@
             var streamMap = this.getStreamMap(mediaJSON);
 
             var result = new Array<MediaInfo>();
-            
+
             streamMap.forEach(item => {
                 var resultItem = new MediaInfo();
                 //#region 通用屬性
@@ -81,12 +81,12 @@
             console.log("FunctionBody " + functionBody);
 
             var functionRefName = functionBody.innerString(";", ".");
-            var functionRef = playerScript.innerString("var " + functionRefName + "=", ";var ");
+            var functionRef = playerScript.innerString("var " + functionRefName + "=", "};") + "}";
             console.log("FunctionRef " + functionRef);
             var args = functionBody.innerString("(", ")");
             functionBody = functionBody.substring(functionBody.indexOf("{") + 1);
             functionBody = "function(" + args + "){var " + functionRefName + "=" + functionRef + ";" + functionBody;
-            
+
             return (value: string, inUrl: boolean) => {
                 var scriptResult = this.safeEval<string>("return (" + functionBody + ")('" + value + "');");
                 var result = value;
@@ -101,7 +101,7 @@
 
         private getStreamFormatList(mediaJSON: JSON): any {
             var result = {};
-            (<string>mediaJSON['args']['fmt_list']).split(',').map(item=>item.split('/')).forEach(item => {
+            (<string>mediaJSON['args']['fmt_list']).split(',').map(item => item.split('/')).forEach(item => {
                 result[item[0]] = item[1];
             });;
             return result;

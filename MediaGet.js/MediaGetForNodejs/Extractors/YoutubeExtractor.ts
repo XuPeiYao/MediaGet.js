@@ -85,7 +85,7 @@
 
 
             var functionRefName = functionBody.innerString(";\n", ".");
-            var functionRef = playerScript.innerString("var " + functionRefName + "=", ";var");
+            var functionRef = playerScript.innerString("var " + functionRefName + "=", "};") + "}";
 
             var args = functionBody.innerString("(", ")");
             functionBody = functionBody.substring(functionBody.indexOf("{") + 1);
