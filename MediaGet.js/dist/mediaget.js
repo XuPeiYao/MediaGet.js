@@ -435,4 +435,4 @@ var MediaGet;
         [MediaGet.Extractors.YoutubeExtractor]: /http(s)?:\/\/www.youtube.com\/watch\?v=.+/
     };
 })(MediaGet || (MediaGet = {}));
-//# sourceMappingURL=mediaget.js.map
+//# sourceMappingURL=mediaGet.js.map
