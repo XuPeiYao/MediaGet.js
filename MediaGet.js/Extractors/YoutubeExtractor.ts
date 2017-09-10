@@ -13,9 +13,12 @@
 
             var ytInitData = this.getYtInitialData(youtubePage) as any;
 
-            var description = null;
+            var description = "";
             try {
-                description = ytInitData.contents.twoColumnWatchNextResults.results.results.contents[1].videoSecondaryInfoRenderer.description.runs[0].text;
+                var desArray: Array<any> = ytInitData.contents.twoColumnWatchNextResults.results.results.contents[1].videoSecondaryInfoRenderer.description.runs;
+                description = desArray.map(item => {
+                    return item.text;
+                }).join("\r\n");
             } catch (e) { }
 
             var decodingFunction = await this.getDecodingFunction("https:" + mediaJSON['assets']['js']);
@@ -68,7 +71,7 @@
         private getMediaJObject(htmlDoc: HTMLDocument): JSON {
             var script = htmlDoc.querySelectorAll("script").toArray()
                 .filter(item => item.textContent != null && item.textContent.indexOf("var ytplayer") > -1)[0].textContent;
-
+            script = script.substring(0, script.indexOf("ytplayer.load"));
             return this.safeEval<JSON>(script + ";return ytplayer.config;");
         }
 

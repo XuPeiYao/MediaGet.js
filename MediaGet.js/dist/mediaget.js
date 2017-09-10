@@ -265,9 +265,12 @@ var MediaGet;
                     if (mediaJSON['args']['livestream'] == '1')
                         throw new MediaGet.NotSupportException();
                     var ytInitData = this.getYtInitialData(youtubePage);
-                    var description = null;
+                    var description = "";
                     try {
-                        description = ytInitData.contents.twoColumnWatchNextResults.results.results.contents[1].videoSecondaryInfoRenderer.description.runs[0].text;
+                        var desArray = ytInitData.contents.twoColumnWatchNextResults.results.results.contents[1].videoSecondaryInfoRenderer.description.runs;
+                        description = desArray.map(item => {
+                            return item.text;
+                        }).join("\r\n");
                     }
                     catch (e) { }
                     var decodingFunction = yield this.getDecodingFunction("https:" + mediaJSON['assets']['js']);
@@ -312,6 +315,7 @@ var MediaGet;
             getMediaJObject(htmlDoc) {
                 var script = htmlDoc.querySelectorAll("script").toArray()
                     .filter(item => item.textContent != null && item.textContent.indexOf("var ytplayer") > -1)[0].textContent;
+                script = script.substring(0, script.indexOf("ytplayer.load"));
                 return this.safeEval(script + ";return ytplayer.config;");
             }
             getYtInitialData(htmlDoc) {
