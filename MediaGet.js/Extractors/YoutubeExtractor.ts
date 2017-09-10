@@ -11,7 +11,12 @@
 
             if (mediaJSON['args']['livestream'] == '1') throw new NotSupportException();
 
-            var description = youtubePage.querySelector('meta[name="description"]').getAttribute("content");
+            var ytInitData = this.getYtInitialData(youtubePage) as any;
+
+            var description = null;
+            try {
+                description = ytInitData.contents.twoColumnWatchNextResults.results.results.contents[1].videoSecondaryInfoRenderer.description.runs[0].text;
+            } catch (e) { }
 
             var decodingFunction = await this.getDecodingFunction("https:" + mediaJSON['assets']['js']);
 
@@ -63,10 +68,17 @@
         private getMediaJObject(htmlDoc: HTMLDocument): JSON {
             var script = htmlDoc.querySelectorAll("script").toArray()
                 .filter(item => item.textContent != null && item.textContent.indexOf("var ytplayer") > -1)[0].textContent;
-            
+
             return this.safeEval<JSON>(script + ";return ytplayer.config;");
         }
-        
+
+        private getYtInitialData(htmlDoc: HTMLDocument): JSON {
+            var script = htmlDoc.querySelectorAll("script").toArray()
+                .filter(item => item.textContent != null && item.textContent.indexOf('window["ytInitialData"]') > -1)[0].textContent;
+
+            return this.safeEval<JSON>(script + ";return window['ytInitialData']");
+        }
+
         private async getDecodingFunction(url: string): Promise<(value: string, inUrl: boolean) => string> {
             var playerScript = await this.downloadStringAsync(MethodTypes.GET, url);
 

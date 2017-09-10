@@ -264,7 +264,12 @@ var MediaGet;
                     var mediaJSON = this.getMediaJObject(youtubePage);
                     if (mediaJSON['args']['livestream'] == '1')
                         throw new MediaGet.NotSupportException();
-                    var description = youtubePage.querySelector('meta[name="description"]').getAttribute("content");
+                    var ytInitData = this.getYtInitialData(youtubePage);
+                    var description = null;
+                    try {
+                        description = ytInitData.contents.twoColumnWatchNextResults.results.results.contents[1].videoSecondaryInfoRenderer.description.runs[0].text;
+                    }
+                    catch (e) { }
                     var decodingFunction = yield this.getDecodingFunction("https:" + mediaJSON['assets']['js']);
                     var streamFormatList = this.getStreamFormatList(mediaJSON);
                     var streamMap = this.getStreamMap(mediaJSON);
@@ -308,6 +313,11 @@ var MediaGet;
                 var script = htmlDoc.querySelectorAll("script").toArray()
                     .filter(item => item.textContent != null && item.textContent.indexOf("var ytplayer") > -1)[0].textContent;
                 return this.safeEval(script + ";return ytplayer.config;");
+            }
+            getYtInitialData(htmlDoc) {
+                var script = htmlDoc.querySelectorAll("script").toArray()
+                    .filter(item => item.textContent != null && item.textContent.indexOf('window["ytInitialData"]') > -1)[0].textContent;
+                return this.safeEval(script + ";return window['ytInitialData']");
             }
             getDecodingFunction(url) {
                 return __awaiter(this, void 0, void 0, function* () {
