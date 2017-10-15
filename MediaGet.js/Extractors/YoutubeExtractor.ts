@@ -88,6 +88,11 @@
             var functionName = playerScript.innerString('"signature",', "))")
                 .innerString('"signature",', "(");
 
+            if (functionName == null || functionName.length == 0) {
+                functionName = playerScript.innerString('"signature",', "))");
+                functionName = functionName.substring(0, functionName.indexOf("("));
+            }
+
             console.log("FunctionName " + functionName);
 
             if (functionName == null || functionName.length == 0) return (value: string, inUrl: boolean) => value;

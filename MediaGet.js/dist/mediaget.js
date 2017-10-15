@@ -328,6 +328,10 @@ var MediaGet;
                     var playerScript = yield this.downloadStringAsync(MediaGet.MethodTypes.GET, url);
                     var functionName = playerScript.innerString('"signature",', "))")
                         .innerString('"signature",', "(");
+                    if (functionName == null || functionName.length == 0) {
+                        functionName = playerScript.innerString('"signature",', "))");
+                        functionName = functionName.substring(0, functionName.indexOf("("));
+                    }
                     console.log("FunctionName " + functionName);
                     if (functionName == null || functionName.length == 0)
                         return (value, inUrl) => value;
