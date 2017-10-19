@@ -283,7 +283,7 @@ var MediaGet;
         /*
          * 針對Dailymotion的剖析器
          */
-        var DailymotionExtractor = (function (_super) {
+        var DailymotionExtractor = DailymotionExtractor_1 = (function (_super) {
             __extends(DailymotionExtractor, _super);
             function DailymotionExtractor() {
                 return _super !== null && _super.apply(this, arguments) || this;
@@ -293,21 +293,84 @@ var MediaGet;
                     var _this = this;
                     return __generator(this, function (_a) {
                         return [2 /*return*/, new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
+                                var dailyPage, mediaJSON, result, temp, quality, newItem;
                                 return __generator(this, function (_a) {
-                                    if (!this.isMatch(url))
-                                        throw new MediaGet.UrlFormatException();
-                                    return [2 /*return*/];
+                                    switch (_a.label) {
+                                        case 0:
+                                            if (!this.isMatch(url))
+                                                throw new MediaGet.UrlFormatException();
+                                            return [4 /*yield*/, this.downloadHtmlDocumentAsync(MediaGet.MethodTypes.GET, url, null)];
+                                        case 1:
+                                            dailyPage = _a.sent();
+                                            console.log("GGG");
+                                            if (!document) return [3 /*break*/, 3];
+                                            return [4 /*yield*/, this.loadHTMLFromIframe(url)];
+                                        case 2:
+                                            dailyPage = _a.sent();
+                                            _a.label = 3;
+                                        case 3:
+                                            mediaJSON = this.getMediaJObject(dailyPage);
+                                            result = [];
+                                            temp = new MediaGet.MediaInfo();
+                                            temp.name = mediaJSON.metadata.title;
+                                            temp.description = dailyPage.querySelector('[property="og:description"]').getAttribute('content');
+                                            temp.duration = mediaJSON.metadata.duration;
+                                            temp.sourceUrl = url;
+                                            temp.thumbnail = mediaJSON.metadata.filmstrip_url;
+                                            temp.type = MediaGet.MediaTypes.Video;
+                                            temp.extractorType = DailymotionExtractor_1;
+                                            for (quality in mediaJSON.metadata.qualities) {
+                                                if (quality == "auto")
+                                                    continue;
+                                                newItem = temp.clone();
+                                                newItem.realUrl = mediaJSON.metadata.qualities[quality].filter(function (x) { return x.type == "video/mp4"; })[0].url;
+                                                newItem.attributes['mime'] = 'video/mp4';
+                                                newItem.attributes['quality'] = quality;
+                                                result.push(newItem);
+                                            }
+                                            resolve(result);
+                                            return [2 /*return*/];
+                                    }
                                 });
                             }); })];
                     });
                 });
             };
+            DailymotionExtractor.prototype.loadHTMLFromIframe = function (url) {
+                return __awaiter(this, void 0, void 0, function () {
+                    return __generator(this, function (_a) {
+                        return [2 /*return*/, new Promise(function (res, rej) {
+                                var f = document.createElement('iframe');
+                                document.body.appendChild(f);
+                                f.hidden = true;
+                                f.onload = function () {
+                                    res(f.contentDocument);
+                                    document.body.removeChild(f);
+                                };
+                                f.src = url;
+                            })];
+                    });
+                });
+            };
+            DailymotionExtractor.prototype.getMediaJObject = function (htmlDoc) {
+                function toArray(THIS) {
+                    var result = new Array();
+                    for (var i = 0; i < THIS.length; i++)
+                        result.push(THIS[i]);
+                    return result;
+                }
+                var script = toArray(htmlDoc.querySelectorAll("script"))
+                    .filter(function (item) { return item.textContent != null && item.textContent.indexOf("__PLAYER_CONFIG__") > -1; })[0].textContent;
+                script = script.substring(0, script.indexOf("var __PLAYER_BODY__"));
+                return this.safeEval(script + ";return __PLAYER_CONFIG__;");
+            };
             return DailymotionExtractor;
         }(MediaGet.ExtractorBase));
-        DailymotionExtractor = __decorate([
+        DailymotionExtractor = DailymotionExtractor_1 = __decorate([
             MediaGet.urlRule({ url: /http(s)?:\/\/www.dailymotion.com\/video\/.+/ })
         ], DailymotionExtractor);
         Extractors.DailymotionExtractor = DailymotionExtractor;
+        var DailymotionExtractor_1;
     })(Extractors = MediaGet.Extractors || (MediaGet.Extractors = {}));
 })(MediaGet || (MediaGet = {}));
 var MediaGet;

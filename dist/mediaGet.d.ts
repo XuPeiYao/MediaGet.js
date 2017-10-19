@@ -112,6 +112,8 @@ declare module MediaGet {
 declare module MediaGet.Extractors {
     class DailymotionExtractor extends ExtractorBase {
         getMediaInfosAsync(url: string): Promise<MediaInfo[]>;
+        loadHTMLFromIframe(url: string): Promise<Document>;
+        getMediaJObject(htmlDoc: HTMLDocument): JSON;
     }
 }
 declare module MediaGet.Extractors {
