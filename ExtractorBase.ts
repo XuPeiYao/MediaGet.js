@@ -5,7 +5,7 @@
     export abstract class ExtractorBase implements IExtractor {
         public abstract async getMediaInfosAsync(url: string): Promise<MediaInfo[]>;
         public isMatch(url: string): boolean {
-            return matchRegex[<any>this.constructor].test(url);
+            return <any>this.constructor['urlRule'].test(url)
         };
 
         protected safeEval<T>(script: string): T {

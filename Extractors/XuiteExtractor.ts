@@ -3,9 +3,10 @@
     /*
      * 針對Xuite的剖析器
      */
+    @urlRule({ url: /http(s)?:\/\/vlog.xuite.net\/play\/.+/ })
     export class XuiteExtractor extends ExtractorBase {
         public async getMediaInfosAsync(url: string): Promise<MediaInfo[]> {
-            return new Promise<MediaInfo[]>(async(resolve, reject) => {
+            return new Promise<MediaInfo[]>(async (resolve, reject) => {
                 if (!this.isMatch(url)) throw new UrlFormatException();
                 var mediaId = this.getMediaId(url);
 
@@ -91,14 +92,14 @@
                     var key = atob(propertys[i].getAttribute('id'));
                     var value = atob(propertys[i].textContent);
 
-                    if(!value || value.length)result[key] = decodeURIComponent(value);
+                    if (!value || value.length) result[key] = decodeURIComponent(value);
                 }
                 return result;
             });
         }
 
         private getMediaId(url: string): string {
-            return btoa(atob(url.split('/').last().innerString('-','.')));
+            return btoa(atob(url.split('/').last().innerString('-', '.')));
         }
     }
 }

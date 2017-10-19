@@ -3,6 +3,7 @@
     /*
      * 針對Youtube的剖析器
      */
+    @urlRule({ url: /http(s)?:\/\/www.youtube.com\/watch\?v=.+/ })
     export class YoutubeExtractor extends ExtractorBase {
         public async getMediaInfosAsync(url: string): Promise<MediaInfo[]> {
             if (!this.isMatch(url)) throw new UrlFormatException();

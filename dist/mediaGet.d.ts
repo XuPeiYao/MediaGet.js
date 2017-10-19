@@ -48,24 +48,6 @@ declare module MediaGet {
         protected downloadHtmlDocumentAsync(method: MethodTypes, url: string, data?: any): Promise<HTMLDocument>;
     }
 }
-declare module MediaGet.Extractors {
-    class XuiteExtractor extends ExtractorBase {
-        getMediaInfosAsync(url: string): Promise<MediaInfo[]>;
-        private getMediaApiData(mediaId);
-        private getMediaId(url);
-    }
-}
-declare module MediaGet.Extractors {
-    class YoutubeExtractor extends ExtractorBase {
-        getMediaInfosAsync(url: string): Promise<MediaInfo[]>;
-        private getMediaJObject(htmlDoc);
-        private getYtInitialData(htmlDoc);
-        private getDecodingFunction(url);
-        private getStreamFormatList(mediaJSON);
-        private getStreamMap(mediaJSON);
-        private convertMediaTypes(mime);
-    }
-}
 declare module MediaGet {
     interface IExtractor {
         getMediaInfosAsync(url: string): Promise<MediaInfo[]>;
@@ -122,9 +104,31 @@ declare module MediaGet {
         Audio = 1,
     }
 }
-import Extractors = MediaGet.Extractors;
 declare module MediaGet {
-    var matchRegex: {
-        [x: number]: RegExp;
-    };
+    function urlRule(config: {
+        url: RegExp;
+    }): (target: Object) => void;
+}
+declare module MediaGet.Extractors {
+    class DailymotionExtractor extends ExtractorBase {
+        getMediaInfosAsync(url: string): Promise<MediaInfo[]>;
+    }
+}
+declare module MediaGet.Extractors {
+    class XuiteExtractor extends ExtractorBase {
+        getMediaInfosAsync(url: string): Promise<MediaInfo[]>;
+        private getMediaApiData(mediaId);
+        private getMediaId(url);
+    }
+}
+declare module MediaGet.Extractors {
+    class YoutubeExtractor extends ExtractorBase {
+        getMediaInfosAsync(url: string): Promise<MediaInfo[]>;
+        private getMediaJObject(htmlDoc);
+        private getYtInitialData(htmlDoc);
+        private getDecodingFunction(url);
+        private getStreamFormatList(mediaJSON);
+        private getStreamMap(mediaJSON);
+        private convertMediaTypes(mime);
+    }
 }
